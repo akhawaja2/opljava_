@@ -75,15 +75,19 @@ public class Deck
         return cards;
     }
 
-    public void printDeck()
+    public String printDeck()
     {
-        System.out.println("-----------------------------Entered printDeck-----------------------------");
+        String deck = "";
         for (int i = 0; i < deckCards.size(); i++)
         {
-            deckCards.get(i).print();
-            System.out.print(" ");
-
+            deck += deckCards.get(i).print();
+            deck += " ";
         }
-        System.out.println("-----------------------------exit printDeck-----------------------------");
+        return deck;
+    }
+
+    public int getSize()
+    {
+        return deckCards.size();
     }
 }

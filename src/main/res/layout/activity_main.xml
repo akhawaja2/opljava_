@@ -9,9 +9,11 @@
 
     <TextView
         android:id="@+id/textView"
-        android:layout_width="235dp"
-        android:layout_height="60dp"
+        android:layout_width="439dp"
+        android:layout_height="140dp"
         android:text="Welcome to Casino!"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        app:autoSizeMaxTextSize="@android:dimen/app_icon_size"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.51"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -21,23 +23,24 @@
 
     <Button
         android:id="@+id/startTournament"
-        android:layout_width="245dp"
-        android:layout_height="51dp"
+        android:layout_width="447dp"
+        android:layout_height="184dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="120dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
+        android:onClick="goToFlip"
         android:text="Start Tournament"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView"
-        android:onClick="goToFlip"/>
+        app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <Button
         android:id="@+id/loadGame"
-        android:layout_width="245dp"
-        android:layout_height="49dp"
+        android:layout_width="448dp"
+        android:layout_height="184dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="40dp"
@@ -50,15 +53,16 @@
 
     <Button
         android:id="@+id/quit"
-        android:layout_width="241dp"
-        android:layout_height="54dp"
+        android:layout_width="447dp"
+        android:layout_height="184dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="36dp"
+        android:layout_marginTop="44dp"
         android:layout_marginEnd="16dp"
         android:layout_marginRight="16dp"
         android:text="Quit"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/loadGame" />
 

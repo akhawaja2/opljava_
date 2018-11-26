@@ -1,0 +1,287 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/gameWindow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark">
+
+    <LinearLayout
+        android:id="@+id/playerHand"
+        android:layout_width="792dp"
+        android:layout_height="212dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="148dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/gameData"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.625"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageButton
+            android:id="@+id/playerCard1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/playerCard2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/playerCard3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/playerCard4"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="789dp"
+        android:layout_height="238dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.83">
+
+        <ImageButton
+            android:id="@+id/compCard1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:adjustViewBounds="false"
+            android:background="@null"
+            android:cropToPadding="false"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/compCard2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/compCard3"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+        <ImageButton
+            android:id="@+id/compCard4"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight=".25"
+            android:background="@null"
+            android:scaleType="fitCenter"
+            app:srcCompat="@drawable/b1fv" />
+
+    </LinearLayout>
+
+    <HorizontalScrollView
+        android:id="@+id/tableScroll"
+        android:layout_width="0dp"
+        android:layout_height="221dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="100dp"
+        android:scrollbars="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/playerHand"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/tableLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+
+            <ImageButton
+                android:id="@+id/tableCard1"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/b1fv" />
+
+            <ImageButton
+                android:id="@+id/tableCard2"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/b1fv" />
+
+            <ImageButton
+                android:id="@+id/tableCard3"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/b1fv" />
+
+            <ImageButton
+                android:id="@+id/tableCard4"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:background="@null"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/b1fv" />
+
+
+
+
+        </LinearLayout>
+    </HorizontalScrollView>
+
+    <ImageButton
+        android:id="@+id/deck"
+        android:layout_width="112dp"
+        android:layout_height="151dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:background="@null"
+        android:onClick="showDeck"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="0.986"
+        android:scaleType="fitCenter"
+        app:srcCompat="@drawable/b1fv" />
+
+    <TextView
+        android:id="@+id/gameData"
+        android:layout_width="677dp"
+        android:layout_height="163dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginRight="24dp"
+        android:layout_marginBottom="4dp"
+        android:scrollbars="vertical"
+        android:text="The game data (Deck, moves, etc. will be put here)"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/deck"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="166dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Check Piles"
+        app:layout_constraintBottom_toTopOf="@+id/gameData"
+        app:layout_constraintEnd_toStartOf="@+id/button2"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="168dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="456dp"
+        android:layout_marginRight="456dp"
+        android:layout_marginBottom="8dp"
+        android:text="Save Game"
+        app:layout_constraintBottom_toTopOf="@+id/gameData"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <LinearLayout
+        android:id="@+id/movesLayout"
+        android:layout_width="784dp"
+        android:layout_height="55dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="44dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_weight="1"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tableScroll">
+
+        <Button
+            android:id="@+id/suggest"
+            android:layout_width="422dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="Suggest a Move" />
+        <Button
+            android:id="@+id/build"
+            android:layout_width="422dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="Build" />
+        <Button
+            android:id="@+id/capture"
+            android:layout_width="422dp"
+            android:layout_height="match_parent"
+            android:text="Capture"
+            android:layout_weight=".5" />
+        <Button
+            android:id="@+id/trail"
+            android:layout_width="422dp"
+            android:layout_height="match_parent"
+            android:layout_weight=".5"
+            android:text="Trail" />
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

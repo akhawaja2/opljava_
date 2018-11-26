@@ -6,6 +6,10 @@ public class Card
     String suit;
     int number;
     String symbol;
+    public Card ()
+    {
+
+    }
     public Card(String suit, int number, String symbol)
     {
         //Suit is the suit of the card (HDSC)
@@ -83,25 +87,89 @@ public class Card
         return false;
     }
     //Vector combinations = vector < vector<Card> > combination
-    public static void printCombinationCards(ArrayList combination)
+    public String printCombinationCards(ArrayList<ArrayList<Card>> combination)
     {
+        String combinationCard = "[ ";
+        String card = "";
         //cout << "[ ";
         for (int i = 0; i < combination.size(); i++)
         {
-            //printCards(combination.at(i));
+            card +=  printCards(combination.get(i));
+            combinationCard += printCards(combination.get(i));
             //cout << " ";
         }
-        //cout << "] ";
+        combinationCard +=  "] ";
+
+        return combinationCard;
     }
 
-    public void print()
+    public String print()
     {
-        System.out.print(this.suit + this.symbol);
+        return (this.suit + this.symbol);
+    }
+
+    void printWhole()
+    {
+        System.out.print(this.symbol + " of ");
+        if (this.suit == "S")
+        {
+            System.out.print("spades");
+        }
+        if (this.suit == "D")
+        {
+            System.out.print("diamonds");
+        }
+        if (this.suit == "H")
+        {
+            System.out.print("hearts");
+        }
+        if (this.suit == "C")
+        {
+            System.out.print("clubs");
+        }
+    }
+
+    void printCardsWhole(ArrayList<Card> Cards)
+    {
+        if (Cards.size()>1)
+            System.out.print( "A set of ");
+        for (int i = 0; i < Cards.size(); i++)
+        {
+            Cards.get(i).printWhole();
+            if (i == Cards.size() - 2)
+            {
+                System.out.print(" and ");
+            }
+            else if (Cards.size() > 1)
+            {
+                System.out.print(", ");
+            }
+        }
+    }
+
+    String printCards(ArrayList<Card> Cards)
+    {
+        String cardToPrint = "[ ";
+        for (int i = 0; i < Cards.size(); i++)
+        {
+            cardToPrint += Cards.get(i).print();
+            System.out.print(" ");
+        }
+        cardToPrint += " ]";
+
+        return cardToPrint;
+    }
+
+    String toStr()
+    {
+        String cardStr = "";
+
+        cardStr += suit + symbol;
+
+        return cardStr;
     }
     /*Functions missing:
     * printCombinationCardsWhole
-    *printCards
-     * printCardsWhole
       * print
       * convertStringToCard*/
 }

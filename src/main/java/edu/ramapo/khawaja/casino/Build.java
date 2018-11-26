@@ -5,6 +5,10 @@ import java.util.ArrayList;
 
 public class Build {
 
+    public Build ()
+    {
+
+    }
     public Build(String owner, Card BuildHolder, boolean isMultiBuild)
     {
 
@@ -65,7 +69,38 @@ public class Build {
         return this.isMultiBuild;
     }
 
+    void print()
+    {
+        Card buildCardsToPrint = new Card();
+        if (this.isMultiBuild == false)
+        {
+            buildCardsToPrint.printCards(this.getBuildCards());
+        }
+	    else
+        {
+            buildCardsToPrint.printCombinationCards(this.getMultiBuildCards());
+        }
+    }
+    void printBuilds(ArrayList<Build> Builds)
+    {
+        Card buildCardsToPrint = new Card();
+        for (int i = 0; i < Builds.size(); i++)
+        {
+            System.out.print(i + 1 + " :");
+            if (Builds.get(i).getIsMultiBuild())
+            {
+                buildCardsToPrint.printCombinationCards(Builds.get(i).getMultiBuildCards());
+            }
+            else
+            {
+                buildCardsToPrint.printCards(Builds.get(i).getBuildCards());
+            }
+            System.out.print("Because you have ");
+            Builds.get(i).getBuildHolder().print();
+            System.out.println(" in hand");
+        }
 
+    }
     private ArrayList<Card> buildCards;
     private ArrayList<ArrayList<Card>> multiBuildCards;
     private ArrayList<Build> builtWithInBuild;
