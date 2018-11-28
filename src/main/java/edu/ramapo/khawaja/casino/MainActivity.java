@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -27,6 +28,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean isPressed = false;
     boolean movePressed = false;
     Card selectedCard = new Card();
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
@@ -117,8 +120,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     deckPrintOut.append("Selected trail\n");
                     if (isPressed)
                     {
-                        deckPrintOut.append("Selected card " + "\n");
+                        deckPrintOut.append("Selected card " + "\n" + "Trailing card. \n");
+
                     }
+                    clearView(view);
+                    rounds.getTable().getLooseCards().add(selectedCard);
+                    players.get(0).removeCardFromHand(selectedCard);
+                    loadGameView(view);
                 }
                 break;
             }
@@ -146,22 +154,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     {
                         deckPrintOut.append("Found matching card: " +  matchingCards.get(i).print() + "\n");
                     }
-                    players.get(0).addCardInPile(matchingCards, selectedCard);
-
-                    players.get(0).removeCardFromHand(selectedCard);
-                    rounds.getTable().removeMatchingLooseCardsFromtable(matchingCards);
-
-                    //rounds.gameEngine(selectedCard);
-                    for (int i = 0; i < layout.getChildCount(); i++)
+                    if (matchingCards.size() > 0)
                     {
-                        View v = layout.getChildAt(i);
-                        if (v.getTag() == selectedCard)
-                        {
-                            v.setEnabled(false);
-                        }
+                        players.get(0).addCardInPile(matchingCards, selectedCard);
+                        clearView(view);
+                        players.get(0).removeCardFromHand(selectedCard);
+                        rounds.getTable().removeMatchingLooseCardsFromtable(matchingCards);
+                        loadGameView(view);
                     }
-                    rounds.computerGameEngine(Round.PLAYER.HUMAN, Round.PLAYER.COMPUTER);
-                    //System.out.println(rounds.getTable().printTable());
+                    else
+                    {
+                        deckPrintOut.append("No valid capture card. \n");
+                    }
+
                 }
                 //rounds.getTable().getCaptureCardsForPlayedCard(Card playedCard, players, int current`Player,
                // int opponent, boolean addCards, boolean applyAction)
@@ -201,8 +206,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
+    public void clearView(View view)
+    {
+        ArrayList<ImageButton> playerHand = new ArrayList<ImageButton>() {{
+            add(bottomCard1);
+            add(bottomCard2);
+            add(bottomCard3);
+            add(bottomCard4);
+            // etc.
+        }};
+        ArrayList<ImageButton> tableHand = new ArrayList<ImageButton>() {{
+            add(tableCard1);
+            add(tableCard2);
+            add(tableCard3);
+            add(tableCard4);
+            // etc.
+        }};
+        for (int i = 0; i < rounds.getPlayers().get(0).getHand().size(); i++)
+        {
+            playerHand.get(i).setImageResource(android.R.color.transparent);
+        }
+        for (int i = 0; i < rounds.getTable().getLooseCards().size(); i++)
+        {
+            tableHand.get(i).setImageResource(android.R.color.transparent);
+        }
+
+    }
     public void loadGameView (View view)
     {
+
         bottomCard1 =  findViewById(R.id.playerCard1);
         bottomCard1.setOnClickListener(this);
         bottomCard2 =  findViewById(R.id.playerCard2);
@@ -230,22 +262,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tableCard2 =findViewById(R.id.tableCard2);
         tableCard3 =findViewById(R.id.tableCard3);
         tableCard4 = findViewById(R.id.tableCard4);
+        ArrayList<ImageButton> playerHand = new ArrayList<ImageButton>() {{
+            add(bottomCard1);
+            add(bottomCard2);
+            add(bottomCard3);
+            add(bottomCard4);
+            // etc.
+        }};
+        ArrayList<ImageButton> tableHand = new ArrayList<ImageButton>() {{
+            add(tableCard1);
+            add(tableCard2);
+            add(tableCard3);
+            add(tableCard4);
+            // etc.
+        }};
+        for (int i = 0; i < players.get(0).getHand().size(); i++)
+        {
+            assignImages(players.get(0).getHand().get(i), playerHand.get(i));
+        }
+        /*for (int i = 0; i < players.get(1).getHand().size(); i++)
+        {
 
-        assignImages(players.get(0).getHand().get(0), bottomCard1);
+        }*/
+        /*assignImages(players.get(0).getHand().get(0), bottomCard1);
         assignImages(players.get(0).getHand().get(1), bottomCard2);
         assignImages(players.get(0).getHand().get(2), bottomCard3);
-        assignImages(players.get(0).getHand().get(3), bottomCard4);
+        assignImages(players.get(0).getHand().get(3), bottomCard4);*/
 
         assignImages(players.get(1).getHand().get(0), topCard1);
         assignImages(players.get(1).getHand().get(1), topCard2);
         assignImages(players.get(1).getHand().get(2), topCard3);
         assignImages(players.get(1).getHand().get(3), topCard4);
 
-        assignImages(rounds.getTable().getLooseCards().get(0), tableCard1);
+        /*assignImages(rounds.getTable().getLooseCards().get(0), tableCard1);
         assignImages(rounds.getTable().getLooseCards().get(1), tableCard2);
         assignImages(rounds.getTable().getLooseCards().get(2), tableCard3);
-        assignImages(rounds.getTable().getLooseCards().get(3), tableCard4);
+        assignImages(rounds.getTable().getLooseCards().get(3), tableCard4);*/
 
+        for (int i = 0; i < rounds.getTable().getLooseCards().size(); i++)
+        {
+            if (rounds.getTable().getLooseCards().get(i) == null)
+            {
+                tableHand.get(i).setImageResource(android.R.color.transparent);
+            }
+            assignImages(rounds.getTable().getLooseCards().get(i), tableHand.get(i));
+        }
     }
     public void showDeck(View view)
     {
@@ -588,4 +649,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             image.setTag(assignedCard);
         }
     }
+
 }
