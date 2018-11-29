@@ -56,7 +56,7 @@ public class Player
 
     public void addCardInHand(ArrayList<Card> Cards)
     {
-        System.out.print("ENTERED ACIH");
+        //System.out.print("ENTERED ACIH");
         for (int i = 0; i < Cards.size(); i++)
         {
             hand.add(Cards.get(i));
@@ -201,17 +201,18 @@ public class Player
         you.incrementScoreBy(you.getCardCount("A"));
         return you.getScore();
     }
-    void printPile()
+    String printPile()
     {
-        System.out.print("\n" + this.name + "'s pile: [ ");
+        String pileStr = " ";
+        pileStr += "\n" + this.name + "'s pile: [ ";
         //Looping through the pile and printing it
         for (int i = 0; i < pile.size(); i++)
         {
-            pile.get(i).print();
-            System.out.print(" ");
-
+            pileStr +=  pile.get(i).print();
+            pileStr += " ";
         }
-        System.out.print(" ]\n");
+        pileStr += " ]\n";
+        return pileStr;
     }
     String printHand()
     {

@@ -1,5 +1,6 @@
 package edu.ramapo.khawaja.casino;
 
+import android.content.Context;
 import android.media.Image;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -13,12 +14,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener
+public class MainActivity  extends AppCompatActivity implements View.OnClickListener
 {
     ImageButton bottomCard1, bottomCard2, bottomCard3, bottomCard4, topCard1, topCard2, topCard3, topCard4;
     ImageButton tableCard1, tableCard2, tableCard3, tableCard4;
@@ -28,16 +31,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     boolean isPressed = false;
     boolean movePressed = false;
     Card selectedCard = new Card();
+    ArrayList<ImageButton> playerHand = new ArrayList<ImageButton>();
 
-
+    ArrayList<ImageButton> tableHand = new ArrayList<ImageButton>();
+    ArrayList<ImageButton> computerHand = new ArrayList<ImageButton>();
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         rounds.dealCards(true, true, true);
-
     }
     public void onClick(View view)
     {
@@ -121,11 +124,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (isPressed)
                     {
                         deckPrintOut.append("Selected card " + "\n" + "Trailing card. \n");
-
                     }
-                    clearView(view);
-                    rounds.getTable().getLooseCards().add(selectedCard);
-                    players.get(0).removeCardFromHand(selectedCard);
+                    if (rounds.getTable().getLooseCards().size() >= 4)
+                    {
+                        ImageButton cardToTrail = new ImageButton(this);
+                        //cardToTrail.setTag(selectedCard.getTag());
+                        tableHand.add(cardToTrail);
+
+                        LinearLayout tableLayout = findViewById(R.id.tableLayout);
+                        tableLayout.addView(cardToTrail, rounds.getTable().getLooseCards().size());
+                        clearView(view);
+                        rounds.getTable().getLooseCards().add(selectedCard);
+
+                        players.get(0).removeCardFromHand(selectedCard);
+
+                        //loadGameView(view);
+                    }
+                    else
+                    {
+                        clearView(view);
+                        rounds.getTable().getLooseCards().add(selectedCard);
+                        players.get(0).removeCardFromHand(selectedCard);
+                        //rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
+                    }
+                    rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
+                    if ( rounds.getTable().getLooseCards().size() > tableHand.size())
+                    {
+                        ImageButton computerCardToTrail = new ImageButton(this);
+                        //cardToTrail.setTag(selectedCard.getTag());
+                        tableHand.add(computerCardToTrail);
+
+                        LinearLayout tableLayout = findViewById(R.id.tableLayout);
+                        tableLayout.addView(computerCardToTrail, rounds.getTable().getLooseCards().size());
+                        clearView(view);
+                        //rounds.getTable().getLooseCards().add(selectedCard);
+
+                        //players.get(0).removeCardFromHand(selectedCard);
+                    }
                     loadGameView(view);
                 }
                 break;
@@ -157,15 +192,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     if (matchingCards.size() > 0)
                     {
                         players.get(0).addCardInPile(matchingCards, selectedCard);
+                        players.get(0).addOneCardInPile(selectedCard);
                         clearView(view);
                         players.get(0).removeCardFromHand(selectedCard);
                         rounds.getTable().removeMatchingLooseCardsFromtable(matchingCards);
+                        rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
                         loadGameView(view);
                     }
                     else
                     {
-                        deckPrintOut.append("No valid capture card. \n");
+                        deckPrintOut.append("No valid  matching loose cards. \n");
                     }
+                    ArrayList<ArrayList<Card>> matchingCombinations = rounds.getTable().getMatchingCombination(selectedCard);
+                    while (matchingCombinations.size() > 0)
+                    {
+                        int index = 0;
+                        clearView(view);
+                        players.get(0).addOneCardInPile(selectedCard);
+                        players.get(0).removeCardFromHand(selectedCard);
+                        players.get(0).addCardInPile(matchingCombinations.get(index), selectedCard);
+                        rounds.getTable().removeMatchingLooseCardsFromtable(matchingCombinations.get(index));
+                        matchingCombinations.remove(index);
+                        index++;
+                        loadGameView(view);
+                    }
+                   /* for (int i = 0; i < matchingCombinations.size(); i++)
+                    {
+                        players.get(0).addCardInPile(matchingCombinations.get(i), selectedCard);
+                        rounds.getTable().removeMatchingLooseCardsFromtable(matchingCombinations.get(i));
+                        matchingCombinations.remove(matchingCombinations.get(i));
+                    }*/
 
                 }
                 //rounds.getTable().getCaptureCardsForPlayedCard(Card playedCard, players, int current`Player,
@@ -194,34 +250,76 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
         setContentView(R.layout.table_view);
+
+        bottomCard1 =  findViewById(R.id.playerCard1);
+        bottomCard2 =  findViewById(R.id.playerCard2);
+        bottomCard3 =  findViewById(R.id.playerCard3);
+        bottomCard4 = findViewById(R.id.playerCard4);
+        playerHand.add(bottomCard1);
+        playerHand.add(bottomCard2);
+        playerHand.add(bottomCard3);
+        playerHand.add(bottomCard4);
+
+
+        tableCard1 = findViewById(R.id.tableCard1);
+        tableCard2 =findViewById(R.id.tableCard2);
+        tableCard3 =findViewById(R.id.tableCard3);
+        tableCard4 = findViewById(R.id.tableCard4);
+        tableHand.add(tableCard1);
+        tableHand.add(tableCard2);
+        tableHand.add(tableCard3);
+        tableHand.add(tableCard4);
+
+        topCard1 =  findViewById(R.id.compCard1);
+        topCard2 =  findViewById(R.id.compCard2);
+        topCard3 =  findViewById(R.id.compCard3);
+        topCard4 =  findViewById(R.id.compCard4);
+        computerHand.add(topCard1);
+        computerHand.add(topCard2);
+        computerHand.add(topCard3);
+        computerHand.add(topCard4);
         loadGameView(view);
+        //startRound();
         TextView gameData = findViewById(R.id.gameData);
         if (result == choice)
         {
             gameData.append("\nYou won the toss!\n");
+            rounds.setTurn(0);
         }
         else
         {
             gameData.append("\nYou lost the toss!\n");
+            rounds.setTurn(1);
+        }
+    }
+    public void startRound()
+    {
+        while (rounds.getDeck().getDeckCards().size() > 0 || rounds.getTable().getBuilds().size() > 0 || rounds.getTable().getLooseCards().size() > 0)
+        {
+            if (rounds.getPlayers().get(1).getHand().size() == 0 && rounds.getPlayers().get(0).getHand().size() == 0)
+            {
+                rounds.dealCards(true, true, false);
+                //If the table is empty and there are no Builds out (that the user can capture) then deal to the table
+                if (rounds.getTable().getLooseCards().size() == 0 && rounds.getTable().getBuilds().size() == 0)
+                {
+                    rounds.dealCards(false, false, true);
+                }
+            }
         }
 
+        if (rounds.getTurn() == Round.PLAYER.COMPUTER.getPlayerVal())
+        {
+            rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
+            rounds.setTurn(0);
+        }
     }
     public void clearView(View view)
     {
-        ArrayList<ImageButton> playerHand = new ArrayList<ImageButton>() {{
-            add(bottomCard1);
-            add(bottomCard2);
-            add(bottomCard3);
-            add(bottomCard4);
-            // etc.
-        }};
-        ArrayList<ImageButton> tableHand = new ArrayList<ImageButton>() {{
-            add(tableCard1);
-            add(tableCard2);
-            add(tableCard3);
-            add(tableCard4);
-            // etc.
-        }};
+
+        for (int i = 0; i < players.get(1).getHand().size(); i++)
+        {
+            computerHand.get(i).setImageResource(android.R.color.transparent);
+        }
         for (int i = 0; i < rounds.getPlayers().get(0).getHand().size(); i++)
         {
             playerHand.get(i).setImageResource(android.R.color.transparent);
@@ -234,16 +332,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
     public void loadGameView (View view)
     {
-
-        bottomCard1 =  findViewById(R.id.playerCard1);
-        bottomCard1.setOnClickListener(this);
-        bottomCard2 =  findViewById(R.id.playerCard2);
-        bottomCard2.setOnClickListener(this);
-        bottomCard3 =  findViewById(R.id.playerCard3);
-        bottomCard3.setOnClickListener(this);
-        bottomCard4 = findViewById(R.id.playerCard4);
-        bottomCard4.setOnClickListener(this);
-
         build = findViewById(R.id.build);
         build.setOnClickListener(this);
         capture = findViewById(R.id.capture);
@@ -252,59 +340,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         trail.setOnClickListener(this);
         //Setting clickability to buttons
 
-        topCard1 =  findViewById(R.id.compCard1);
-        topCard2 =  findViewById(R.id.compCard2);
-        topCard3 =  findViewById(R.id.compCard3);
-        topCard4 =  findViewById(R.id.compCard4);
-
-
-        tableCard1 = findViewById(R.id.tableCard1);
-        tableCard2 =findViewById(R.id.tableCard2);
-        tableCard3 =findViewById(R.id.tableCard3);
-        tableCard4 = findViewById(R.id.tableCard4);
-        ArrayList<ImageButton> playerHand = new ArrayList<ImageButton>() {{
-            add(bottomCard1);
-            add(bottomCard2);
-            add(bottomCard3);
-            add(bottomCard4);
-            // etc.
-        }};
-        ArrayList<ImageButton> tableHand = new ArrayList<ImageButton>() {{
-            add(tableCard1);
-            add(tableCard2);
-            add(tableCard3);
-            add(tableCard4);
-            // etc.
-        }};
+        // etc.
         for (int i = 0; i < players.get(0).getHand().size(); i++)
         {
+            playerHand.get(i).setOnClickListener(this);
             assignImages(players.get(0).getHand().get(i), playerHand.get(i));
         }
-        /*for (int i = 0; i < players.get(1).getHand().size(); i++)
+        for (int i = 0; i < players.get(1).getHand().size(); i++)
         {
-
-        }*/
-        /*assignImages(players.get(0).getHand().get(0), bottomCard1);
-        assignImages(players.get(0).getHand().get(1), bottomCard2);
-        assignImages(players.get(0).getHand().get(2), bottomCard3);
-        assignImages(players.get(0).getHand().get(3), bottomCard4);*/
-
-        assignImages(players.get(1).getHand().get(0), topCard1);
-        assignImages(players.get(1).getHand().get(1), topCard2);
-        assignImages(players.get(1).getHand().get(2), topCard3);
-        assignImages(players.get(1).getHand().get(3), topCard4);
-
-        /*assignImages(rounds.getTable().getLooseCards().get(0), tableCard1);
-        assignImages(rounds.getTable().getLooseCards().get(1), tableCard2);
-        assignImages(rounds.getTable().getLooseCards().get(2), tableCard3);
-        assignImages(rounds.getTable().getLooseCards().get(3), tableCard4);*/
+            assignImages(players.get(1).getHand().get(i), computerHand.get(i));
+        }
 
         for (int i = 0; i < rounds.getTable().getLooseCards().size(); i++)
         {
-            if (rounds.getTable().getLooseCards().get(i) == null)
-            {
-                tableHand.get(i).setImageResource(android.R.color.transparent);
-            }
             assignImages(rounds.getTable().getLooseCards().get(i), tableHand.get(i));
         }
     }
@@ -322,15 +370,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         deckPrintOut.append("\nPlayer " + plays.get(1).getName());
         deckPrintOut.append(plays.get(1).printHand() + "\n");
+
         deckPrintOut.append("\nPlayer " + plays.get(0).getName()) ;
         deckPrintOut.append(plays.get(0).printHand() + "\n");
+
         deckPrintOut.setMovementMethod(new ScrollingMovementMethod());
 
         deckPrintOut.append("Table: " + rounds.getTable().printTable());
         //deckPrintOut.append(rounds.getTable().printTable() + "\n");
     }
 
+    public void checkPile(View view)
+    {
+        TextView deckPrintOut =  findViewById(R.id.gameData);
+        deckPrintOut.append(rounds.getPlayers().get(1).printPile());
+        deckPrintOut.append(rounds.getPlayers().get(0).printPile());
+    }
+    public void suggestMove(View view)
+    {
+        TextView deckPrintOut =  findViewById(R.id.gameData);
 
+       rounds.computerGameEngine(Round.PLAYER.HUMAN, Round.PLAYER.COMPUTER);
+
+
+       deckPrintOut.append(rounds.getMessage() + "\n");
+
+       System.out.println("\n\n\n\n" + rounds.getMessage());
+
+    }
     public void assignImages(Card card, ImageButton image)
     {
         Card assignedCard;

@@ -108,25 +108,32 @@ public class Card
         return (this.suit + this.symbol);
     }
 
-    void printWhole()
+    String printWhole()
     {
+        String message = "";
+        message += this.symbol + " of ";
         System.out.print(this.symbol + " of ");
         if (this.suit == "S")
         {
             System.out.print("spades");
+            message += "spades";
         }
         if (this.suit == "D")
         {
             System.out.print("diamonds");
+            message += "diamonds";
         }
         if (this.suit == "H")
         {
             System.out.print("hearts");
+            message += "hearts";
         }
         if (this.suit == "C")
         {
             System.out.print("clubs");
+            message += "clubs";
         }
+        return message;
     }
 
     void printCardsWhole(ArrayList<Card> Cards)

@@ -36,6 +36,7 @@ public class Round
             return turnVal;
         }
     };
+    TURN turnType;
     //Latest capture - 0 is human, 1 is player. It kept breaking when I made it private or protected. Sorry =[
     int latestCapture = 0;
     private Round ()
@@ -78,7 +79,7 @@ public class Round
         Card chosenCard = new Card();
         //By default the turn type is a trail because that means
         //the CPU has no moves to make.
-        TURN turnType = TURN.TRAIL;
+        turnType = TURN.TRAIL;
         for (int i = 0; i < players.get(currentPlayer.getPlayerVal()).getHand().size(); i++)
         {
             //Creating a potential Card to be played (this Card is whatever i is)
@@ -168,8 +169,13 @@ public class Round
         else if (turnType == TURN.TRAIL && currentPlayer == PLAYER.COMPUTER)
         {
             System.out.print("\n\nThe computer has trailed the ");
+            message += "\n\nThe computer has trailed the " ;
+
             players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole();
+            message = message + (players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole());
             System.out.print("\n because they have no options for capturing, building, or increasing a build.");
+            message += "\n because they have no options for capturing, building, or increasing a build.";
+
             Table.getLooseCards().add(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
             players.get(PLAYER.COMPUTER.getPlayerVal()).removeCardFromHand(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
             checkForRoundEnd(PLAYER.COMPUTER, PLAYER.HUMAN);
@@ -177,6 +183,7 @@ public class Round
         else  if (turnType == TURN.TRAIL && currentPlayer == PLAYER.HUMAN)
         {
             System.out.print("\nYou should trail a card because I could not find any viable captures or builds for you.");
+            message += "\nYou should trail a card because I could not find any viable captures or builds for you.";
         }
         //Printing our new updated table!
         System.out.print("\n\n");
@@ -195,8 +202,11 @@ public class Round
         if (matchingCards.size() > 0)
         {
             System.out.print("\n-----The following matching cards has been added into your pile-----\n");
+            message += "\n-----The following matching cards has been added into your pile-----\n";
             Card printMatching = new Card();
             printMatching.printCards(matchingCards);
+            message +=  printMatching.printCards(matchingCards);
+            message += "\n\n";
             System.out.print("\n\n");
             //adding the Card to the human pile and removing it from the hand so no duplicates
             //and then removing the matching Card from the table. Card played is now true
@@ -214,8 +224,10 @@ public class Round
         {
             //I print the potential Cards that can be captured and offer the user the option
             //to pick
+            message += "\n-----Following are the combination of cards you can capture-----\n";
             System.out.print("\n-----Following are the combination of cards you can capture-----\n");
             Card printCombinations = new Card();
+            message += printCombinations.printCombinationCards(matchingCombination);
             printCombinations.printCombinationCards(matchingCombination);
             System.out.print("\nPlease choose the position (1, 2, etc.) of combination you want to capture (Press N/n to leave): ");
             //Setting up input validation - every matching combination + n and N incase the user
@@ -539,6 +551,26 @@ public class Round
         }
 
     }
+    void setTurn(int turn)
+    {
+        this.turn = turn;
+    }
+    String getMessage()
+    {
+        return message;
+    }
+    TURN getTurnType()
+    {
+        return  turnType;
+    }
+    int getTurn()
+    {
+        return turn;
+    }
+    void setFirstTurn(int turn)
+    {
+        this.turn = turn;
+    }
     public Deck getDeck()
     {
         return Deck;
@@ -554,6 +586,7 @@ public class Round
     private int roundNumber = 0;
     private int turn = 0; // 1 is Human 2 is Computer
     private int nextTurn = 0;
+    String message = "";
 
     //problems
     //HumanMove .get(HUMAN)

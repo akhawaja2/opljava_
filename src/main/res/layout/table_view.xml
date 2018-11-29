@@ -142,7 +142,7 @@
 
             <ImageButton
                 android:id="@+id/tableCard1"
-                android:layout_width="wrap_content"
+                android:layout_width="168dp"
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:scaleType="fitCenter"
@@ -150,7 +150,7 @@
 
             <ImageButton
                 android:id="@+id/tableCard2"
-                android:layout_width="wrap_content"
+                android:layout_width="168dp"
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:scaleType="fitCenter"
@@ -158,7 +158,7 @@
 
             <ImageButton
                 android:id="@+id/tableCard3"
-                android:layout_width="wrap_content"
+                android:layout_width="161dp"
                 android:layout_height="match_parent"
                 android:background="@null"
                 android:scaleType="fitCenter"
@@ -166,73 +166,13 @@
 
             <ImageButton
                 android:id="@+id/tableCard4"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-            <ImageButton
-                android:id="@+id/tableCard5"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
+                android:layout_width="187dp"
+                android:layout_height="211dp"
                 android:background="@null"
                 android:scaleType="fitCenter"
                 app:srcCompat="@drawable/b1fv" />
 
-            <ImageButton
-                android:id="@+id/tableCard6"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
 
-            <ImageButton
-                android:id="@+id/tableCard7"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-
-            <ImageButton
-                android:id="@+id/tableCard8"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-            <ImageButton
-                android:id="@+id/tableCard9"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-
-            <ImageButton
-                android:id="@+id/tableCard10"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-
-            <ImageButton
-                android:id="@+id/tableCard11"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
-
-            <ImageButton
-                android:id="@+id/tableCard12"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:background="@null"
-                android:scaleType="fitCenter"
-                app:srcCompat="@drawable/b1fv" />
 
         </LinearLayout>
     </HorizontalScrollView>
@@ -279,6 +219,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginBottom="8dp"
         android:text="Check Piles"
+        android:onClick="checkPile"
         app:layout_constraintBottom_toTopOf="@+id/gameData"
         app:layout_constraintEnd_toStartOf="@+id/button2"
         app:layout_constraintHorizontal_bias="0.0"
@@ -321,6 +262,7 @@
             android:layout_width="422dp"
             android:layout_height="match_parent"
             android:layout_weight=".5"
+            android:onClick="suggestMove"
             android:text="Suggest a Move" />
         <Button
             android:id="@+id/build"
@@ -342,5 +284,38 @@
             android:text="Trail" />
 
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/humanScore"
+        android:layout_width="114dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="6dp"
+        android:layout_marginRight="6dp"
+        android:layout_marginBottom="8dp"
+        android:text="Human Score: 0 "
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/button"
+        app:layout_constraintEnd_toStartOf="@+id/computerScore"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="0.875" />
+
+    <TextView
+        android:id="@+id/computerScore"
+        android:layout_width="126dp"
+        android:layout_height="18dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="540dp"
+        android:layout_marginRight="540dp"
+        android:layout_marginBottom="8dp"
+        android:text="Computer Score: 0 "
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/button2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="0.864" />
 
 </android.support.constraint.ConstraintLayout>
