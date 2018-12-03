@@ -6,6 +6,10 @@ import java.util.Scanner;
 
 public class Player
 {
+    public Player()
+    {
+
+    }
     public Player(String name)
     {
         this.score = 0;
@@ -20,7 +24,7 @@ public class Player
     {
         return score;
     }
-    private void setScore(int score)
+    public void setScore(int score)
     {
         this.score = score;
     }
@@ -228,7 +232,7 @@ public class Player
     }
 
 
-    protected int score;
+    public int score;
     private ArrayList<Card> hand = new ArrayList<>();
     private ArrayList<Card> pile = new ArrayList<>();
     public String name;

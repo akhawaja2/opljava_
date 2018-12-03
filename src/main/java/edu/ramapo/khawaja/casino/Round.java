@@ -11,7 +11,7 @@ public class Round
     enum PLAYER
     {
         HUMAN(0), COMPUTER(1);
-        private int playerVal;
+        public int playerVal;
 
         PLAYER(int numVal)
         {
@@ -132,7 +132,7 @@ public class Round
         //and their hand and pile is updated.
         if (turnType == TURN.CAPTURE)
         {
-            Table.getCaptureCardsForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
+            Player cpuPlayer = Table.getCaptureCardsForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
             if (currentPlayer == PLAYER.COMPUTER)
             {
                 players.get(currentPlayer.getPlayerVal()).addOneCardInPile(chosenCard);
@@ -146,7 +146,8 @@ public class Round
         //and their hand and pile is updated.
         else if (turnType == TURN.BUILD)
         {
-            Table.getBuildForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
+           // System.out.println(chosenCard.print());
+            Player cpuPlayer = Table.getBuildForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
             if (currentPlayer == PLAYER.COMPUTER)
             {
                 players.get(currentPlayer.getPlayerVal()).removeCardFromHand(chosenCard);
@@ -157,7 +158,7 @@ public class Round
         //and their hand and pile is updated.
         else if (turnType == TURN.INCBUILD)
         {
-            Table.getBuildIncForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
+            int buildIncIds = Table.getBuildIncForPlayedCard(chosenCard, players, currentPlayer.getPlayerVal(), opponent.getPlayerVal(), false, true);
             if (currentPlayer == PLAYER.COMPUTER)
             {
                 players.get(currentPlayer.getPlayerVal()).removeCardFromHand(chosenCard);
@@ -171,14 +172,18 @@ public class Round
             System.out.print("\n\nThe computer has trailed the ");
             message += "\n\nThe computer has trailed the " ;
 
-            players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole();
-            message = message + (players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole());
-            System.out.print("\n because they have no options for capturing, building, or increasing a build.");
-            message += "\n because they have no options for capturing, building, or increasing a build.";
+            //players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole();
+            if (players.get(currentPlayer.getPlayerVal()).getHand().size() > 0)
+            {
+                message = message + (players.get(currentPlayer.getPlayerVal()).getHand().get(0).printWhole());
+                System.out.print("\n because they have no options for capturing, building, or increasing a build.");
+                message += "\n because they have no options for capturing, building, or increasing a build.";
 
-            Table.getLooseCards().add(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
-            players.get(PLAYER.COMPUTER.getPlayerVal()).removeCardFromHand(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
-            checkForRoundEnd(PLAYER.COMPUTER, PLAYER.HUMAN);
+                Table.getLooseCards().add(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
+                players.get(PLAYER.COMPUTER.getPlayerVal()).removeCardFromHand(players.get(currentPlayer.getPlayerVal()).getHand().get(0));
+                checkForRoundEnd(PLAYER.COMPUTER, PLAYER.HUMAN);
+            }
+
         }
         else  if (turnType == TURN.TRAIL && currentPlayer == PLAYER.HUMAN)
         {
@@ -535,7 +540,6 @@ public class Round
     {
         if (isHuman)
         {
-
             players.get(PLAYER.HUMAN.getPlayerVal()).addCardInHand(Deck.drawFourCards());
             //System.out.println(players.get(PLAYER.HUMAN.getPlayerVal()).getHand());
         }
@@ -550,6 +554,18 @@ public class Round
             Table.addCardInLooseCards(Deck.drawFourCards());
         }
 
+    }
+    void setScoreForPlayer(PLAYER player, int score)
+    {
+        this.players.get(player.getPlayerVal()).setScore(score);
+    }
+    void setRound(int round)
+    {
+        roundNumber = round;
+    }
+    int getRound()
+    {
+        return roundNumber;
     }
     void setTurn(int turn)
     {
@@ -583,7 +599,7 @@ public class Round
     private ArrayList<Player> players = new ArrayList<>();
     private Deck Deck = new Deck();
     private Table Table = new Table();
-    private int roundNumber = 0;
+    private int roundNumber = 1;
     private int turn = 0; // 1 is Human 2 is Computer
     private int nextTurn = 0;
     String message = "";

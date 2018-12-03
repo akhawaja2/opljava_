@@ -256,7 +256,9 @@ public class Table
                                         int opponent, boolean addCards, boolean applyAction)
     {
         //Creating a vector of temporary Builds and checking all potential Builds
-        ArrayList<Build> BuildsTemp = checkBuildOptions(playedCard, players.get(currentPlayer).getHand());
+        ArrayList<Build> BuildsTemp = new ArrayList<>();
+        BuildsTemp = checkBuildOptions(playedCard, players.get(currentPlayer).getHand());
+        //System.out.println(BuildsTemp);
         int max = 0;
         int sum = 0;
         int oldMaxIndex = -1;
@@ -321,12 +323,17 @@ public class Table
             }
             if (applyAction && currentPlayer == 1)
             {
-                BuildsTemp.get(index).setOwner(players.get(currentPlayer).getName());
-                removeMatchingLooseCardsFromtable(BuildsTemp.get(index).getBuildCards());
-                Builds.add(BuildsTemp.get(index));
-                players.get(currentPlayer).removeCardFromHand(playedCard);
-                /*Builds.erase(Builds.begin() + index);
-                index = 0;*/
+                if (BuildsTemp.get(index) != null)
+                {
+                    System.out.println(BuildsTemp.get(index));
+                    BuildsTemp.get(index).setOwner(players.get(currentPlayer).getName());
+//                    removeMatchingLooseCardsFromtable(BuildsTemp.get(index).getBuildCards());
+                    Builds.add(BuildsTemp.get(index));
+                    players.get(currentPlayer).removeCardFromHand(playedCard);
+                }
+
+                //Builds.remove(Builds.get(index));
+                //index = 0;
             }
 
         }
@@ -342,7 +349,8 @@ public class Table
             //Print the whole Build
             if (BuildsTemp.size() > 0)
             {
-                //Build::printBuildsWhole(BuildsTemp);
+                Build buildToPrint = new Build();
+                buildToPrint.printBuildsWhole(BuildsTemp);
             }
         }
         //Return the player
@@ -509,7 +517,7 @@ public class Table
         return ids;
     }
 
-    ArrayList<Build> checkBuildOptions(Card playedCard, ArrayList <Card> Cards)
+    public ArrayList<Build> checkBuildOptions(Card playedCard, ArrayList <Card> Cards)
     {
         //Vector that I will return containing all potential Builds
         ArrayList<Build> Builds = new ArrayList<>();
@@ -607,17 +615,22 @@ public class Table
     {
         //I loop through the vector of Cards passed in and then the loose Cards on the table
         //If the Cards are the same I erase the Card from the table and reset j
-        for (int i = 0; i < Cards.size(); i++)
+        if (Cards.size()  > 0)
         {
-            for (int j = 0; j < looseCards.size(); j++)
+            for (int i = 0; i < Cards.size(); i++)
             {
-                if (looseCards.get(j).getNumber() == Cards.get(i).getNumber() && looseCards.get(j).getSuit() == Cards.get(i).getSuit())
+                for (int j = 0; j < looseCards.size(); j++)
                 {
-                    looseCards.remove(looseCards.get(0 + j));
-                    j = 0;
+                    if (looseCards.get(j).getNumber() == Cards.get(i).getNumber() && looseCards.get(j).getSuit() == Cards.get(i).getSuit())
+                    {
+                        looseCards.remove(looseCards.get(0 + j));
+                        j = 0;
+                    }
                 }
             }
         }
+
+
     }
 
     void addCardInLooseCards(ArrayList<Card> Cards)
@@ -632,7 +645,7 @@ public class Table
     String printTable()
     {
         Card cardToPrint = new Card();
-        String table = "[ ";
+        String table = "";
         for (int i = 0; i < Builds.size(); i++)
         {
             if (Builds.get(i).getIsMultiBuild())
@@ -653,7 +666,6 @@ public class Table
             table += looseCards.get(i).print();
             table += " ";
         }
-        table += " ]";
         return table;
     }
     //add function PrintCardsWhole to card

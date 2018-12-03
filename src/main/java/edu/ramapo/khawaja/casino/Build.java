@@ -101,6 +101,28 @@ public class Build {
         }
 
     }
+    void printBuildsWhole(ArrayList<Build> Builds)
+    {
+        Card cardToPrint = new Card();
+        for (int i = 0; i < Builds.size(); i++)
+        {
+            //cout << i + 1 << " :";
+            if (Builds.get(i).getIsMultiBuild())
+            {
+                System.out.print("\nmulti build containing: (");
+                cardToPrint.printCombinationCardsWhole(Builds.get(i).getMultiBuildCards());
+            }
+            else
+            {
+                System.out.print("\nsingle build containing: (");
+                cardToPrint.printCardsWhole(Builds.get(i).getBuildCards());
+            }
+            System.out.print("because of the ");
+            Builds.get(i).getBuildHolder().printWhole();
+            System.out.println(" in hand)");
+        }
+
+    }
     private ArrayList<Card> buildCards;
     private ArrayList<ArrayList<Card>> multiBuildCards;
     private ArrayList<Build> builtWithInBuild;

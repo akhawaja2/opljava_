@@ -287,8 +287,8 @@
 
     <TextView
         android:id="@+id/humanScore"
-        android:layout_width="114dp"
-        android:layout_height="wrap_content"
+        android:layout_width="182dp"
+        android:layout_height="30dp"
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginTop="8dp"
@@ -299,23 +299,43 @@
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/button"
         app:layout_constraintEnd_toStartOf="@+id/computerScore"
+        app:layout_constraintHorizontal_bias="0.27"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/playerHand"
-        app:layout_constraintVertical_bias="0.875" />
+        app:layout_constraintVertical_bias="0.978" />
 
     <TextView
         android:id="@+id/computerScore"
-        android:layout_width="126dp"
-        android:layout_height="18dp"
+        android:layout_width="232dp"
+        android:layout_height="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="540dp"
-        android:layout_marginRight="540dp"
+        android:layout_marginEnd="344dp"
+        android:layout_marginRight="344dp"
         android:layout_marginBottom="8dp"
         android:text="Computer Score: 0 "
         android:textColor="@color/white"
         app:layout_constraintBottom_toTopOf="@+id/button2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/playerHand"
-        app:layout_constraintVertical_bias="0.864" />
+        app:layout_constraintVertical_bias="1.0" />
+
+    <TextView
+        android:id="@+id/roundNumber"
+        android:layout_width="197dp"
+        android:layout_height="25dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        android:text="Round: 1"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toTopOf="@+id/humanScore"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.011"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/playerHand"
+        app:layout_constraintVertical_bias="0.687" />
 
 </android.support.constraint.ConstraintLayout>

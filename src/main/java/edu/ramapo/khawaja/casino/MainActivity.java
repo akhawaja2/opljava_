@@ -10,15 +10,20 @@ import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.ImageButton;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 
 import java.io.BufferedReader;
+import java.io.FileOutputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
+
+import static android.bluetooth.BluetoothClass.Device.Major.COMPUTER;
 
 
 public class MainActivity  extends AppCompatActivity implements View.OnClickListener
@@ -26,7 +31,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     ImageButton bottomCard1, bottomCard2, bottomCard3, bottomCard4, topCard1, topCard2, topCard3, topCard4;
     ImageButton tableCard1, tableCard2, tableCard3, tableCard4;
     Button build, capture, trail;
-    final Round rounds = new Round(false);
+    Round rounds = new Round(false);
     ArrayList<Player> players = rounds.getPlayers();
     boolean isPressed = false;
     boolean movePressed = false;
@@ -123,22 +128,25 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     deckPrintOut.append("Selected trail\n");
                     if (isPressed)
                     {
-                        deckPrintOut.append("Selected card " + "\n" + "Trailing card. \n");
+                        //deckPrintOut.append("Selected card " + "." + "Trailing card. \n");
                     }
                     if (rounds.getTable().getLooseCards().size() >= 4)
                     {
                         ImageButton cardToTrail = new ImageButton(this);
-                        //cardToTrail.setTag(selectedCard.getTag());
+                        cardToTrail.setBackground(null);
+
                         tableHand.add(cardToTrail);
 
                         LinearLayout tableLayout = findViewById(R.id.tableLayout);
+
+
                         tableLayout.addView(cardToTrail, rounds.getTable().getLooseCards().size());
+                        LinearLayout.LayoutParams cardLayout = new LinearLayout.LayoutParams(tableLayout.getHeight(), tableLayout.getHeight());
+                        cardToTrail.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        cardToTrail.setLayoutParams(cardLayout);
                         clearView(view);
                         rounds.getTable().getLooseCards().add(selectedCard);
-
                         players.get(0).removeCardFromHand(selectedCard);
-
-                        //loadGameView(view);
                     }
                     else
                     {
@@ -151,15 +159,30 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     if ( rounds.getTable().getLooseCards().size() > tableHand.size())
                     {
                         ImageButton computerCardToTrail = new ImageButton(this);
+                        computerCardToTrail.setBackground(null);
                         //cardToTrail.setTag(selectedCard.getTag());
                         tableHand.add(computerCardToTrail);
-
                         LinearLayout tableLayout = findViewById(R.id.tableLayout);
-                        tableLayout.addView(computerCardToTrail, rounds.getTable().getLooseCards().size());
+                        LinearLayout.LayoutParams cardLayout = new LinearLayout.LayoutParams(tableLayout.getHeight(), tableLayout.getHeight());
+                        computerCardToTrail.setScaleType(ImageView.ScaleType.FIT_CENTER);
+                        computerCardToTrail.setLayoutParams(cardLayout);
+                        tableLayout.addView(computerCardToTrail);
                         clearView(view);
-                        //rounds.getTable().getLooseCards().add(selectedCard);
+                    }
+                    while (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() > 0)
+                    {
+                        rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
+                    }
+                    if (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() == 0)
+                    {
+                        rounds.dealCards(true, true, false);
+                    }
 
-                        //players.get(0).removeCardFromHand(selectedCard);
+                    rounds.checkForRoundEnd(Round.PLAYER.HUMAN, Round.PLAYER.COMPUTER);
+                    if (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() == 0 && rounds.getTable().getLooseCards().size() == 0)
+                    {
+                        clearView(view);
+                        checkForWin();
                     }
                     loadGameView(view);
                 }
@@ -167,18 +190,46 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             }
             case R.id.build:
             {
-                deckPrintOut.append("build \n");
+                if (movePressed) {
+                    movePressed = false;
+                } else {
+
+
+                    if (isPressed)
+                    {
+                        ArrayList<Build> builds = rounds.getTable().checkBuildOptions(selectedCard, players.get(Round.PLAYER.HUMAN.getPlayerVal()).getHand());
+                        while ((builds.size() > 0))
+                        {
+                            int index = 0;
+                            //I show the user what build options they have, store all the indexes of builds with
+                            //"N" and "n" incase the user does not want to build
+                            System.out.print("----------The following builds are available for you----------\n");
+                            Build availableBuildsPrint = new Build();
+                            availableBuildsPrint.printBuilds(builds);
+                            System.out.print("Please choose the list number(1,2, etc) of the build you want to make (enter N/n to leave): ");
+
+                            //When the user selects an option I print the build created,
+                            //add the build to builds vector (a vector of builds containing all the builds),
+                            //And then remove the loose Cards from the table (Since they are in a build now).
+                            System.out.print("-----The following build Has been formed------\n");
+                            builds.get(index).print();
+                            clearView(view);
+                            rounds.getTable().addBuild(builds.get(builds.size()-1));
+                            rounds.getTable().removeMatchingLooseCardsFromtable(builds.get(builds.size()-1).getBuildCards());
+                            //I remove the played Card from the hand, and erase the build
+                            players.get(Round.PLAYER.HUMAN.getPlayerVal()).removeCardFromHand(selectedCard);
+                            builds.remove(index);
+                            movePressed = true;
+                        }
+                    }
+                }
+
+                loadGameView(view);
                 break;
             }
             case R.id.capture:
             {
-                LinearLayout layout = findViewById(R.id.tableLayout);
-                for ( int i = 0; i < layout.getChildCount(); i++)
-                {
-                    View v = layout.getChildAt(i);
-                    Card tableCard = (Card) v.getTag();
-                    deckPrintOut.append(tableCard.print() + "\n");
-                }
+                //LinearLayout layout = findViewById(R.id.tableLayout);
 
                 if (isPressed)
                 {
@@ -214,18 +265,25 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                         rounds.getTable().removeMatchingLooseCardsFromtable(matchingCombinations.get(index));
                         matchingCombinations.remove(index);
                         index++;
-                        loadGameView(view);
-                    }
-                   /* for (int i = 0; i < matchingCombinations.size(); i++)
-                    {
-                        players.get(0).addCardInPile(matchingCombinations.get(i), selectedCard);
-                        rounds.getTable().removeMatchingLooseCardsFromtable(matchingCombinations.get(i));
-                        matchingCombinations.remove(matchingCombinations.get(i));
-                    }*/
+                        movePressed = false;
 
+                    }
                 }
-                //rounds.getTable().getCaptureCardsForPlayedCard(Card playedCard, players, int current`Player,
-               // int opponent, boolean addCards, boolean applyAction)
+                if (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() == 0)
+                {
+                    rounds.dealCards(true, true, false);
+                }
+                while (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() > 0)
+                {
+                    rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
+                }
+                rounds.checkForRoundEnd(Round.PLAYER.HUMAN, Round.PLAYER.COMPUTER);
+                if (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() == 0 && rounds.getTable().getLooseCards().size() == 0)
+                {
+                    clearView(view);
+                    checkForWin();
+                }
+                loadGameView(view);
                 break;
             }
         }
@@ -306,7 +364,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 }
             }
         }
-
         if (rounds.getTurn() == Round.PLAYER.COMPUTER.getPlayerVal())
         {
             rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
@@ -328,7 +385,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         {
             tableHand.get(i).setImageResource(android.R.color.transparent);
         }
-
     }
     public void loadGameView (View view)
     {
@@ -361,8 +417,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         TextView deckPrintOut =  findViewById(R.id.gameData);
         String deckString = " ";
         deckString = rounds.getDeck().printDeck();
-
-        deckPrintOut.append("Deck: " + deckString + "\n");
+        deckPrintOut.append("\nDeck: " + deckString + "\n");
         deckPrintOut.append("Deck size: " + rounds.getDeck().getSize() + "\n");
 
         ArrayList<Player> plays = rounds.getPlayers();
@@ -383,8 +438,8 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     public void checkPile(View view)
     {
         TextView deckPrintOut =  findViewById(R.id.gameData);
-        deckPrintOut.append(rounds.getPlayers().get(1).printPile());
-        deckPrintOut.append(rounds.getPlayers().get(0).printPile());
+        deckPrintOut.append(rounds.getPlayers().get(1).printPile() + "Size: " + rounds.getPlayers().get(1).getPile().size() +"\n");
+        deckPrintOut.append(rounds.getPlayers().get(0).printPile()+ "Size: " + rounds.getPlayers().get(0).getPile().size() +"\n");
     }
     public void suggestMove(View view)
     {
@@ -406,25 +461,25 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         {
            //image.setCompoundDrawablesWithIntrinsicBounds(0, 0, R.drawable.card1s,0);
             image.setImageResource(R.drawable.card1s);
-            assignedCard = new Card("S", 1, "A");
+            assignedCard = new Card("S", 14, "A");
             image.setTag(assignedCard);
         }
         if (card.toStr().equals("DA"))
         {
             image.setImageResource(R.drawable.card1d);
-            assignedCard = new Card("D", 1, "A");
+            assignedCard = new Card("D", 14, "A");
             image.setTag(assignedCard);
         }
         if (card.toStr().equals("CA"))
         {
             image.setImageResource(R.drawable.card1c_90);
-            assignedCard = new Card("C", 1, "A");
+            assignedCard = new Card("C", 14, "A");
             image.setTag(assignedCard);
         }
         if (card.toStr().equals("HA"))
         {
             image.setImageResource(R.drawable.card1h);
-            assignedCard = new Card("H", 1, "A");
+            assignedCard = new Card("H", 14, "A");
             image.setTag(assignedCard);
         }
         if (card.toStr().equals("S2"))
@@ -716,5 +771,71 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             image.setTag(assignedCard);
         }
     }
+    void checkForWin()
+    {
+        Player playerScore = new Player();
+        TextView deckPrintOut =  findViewById(R.id.gameData);
+        TextView computerScoreText = findViewById(R.id.computerScore);
+        TextView humanScoreText = findViewById(R.id.humanScore);
+        TextView roundNum = findViewById(R.id.roundNumber);
 
+        int humanScore = playerScore.calculateScore(rounds.getPlayers().get(0), rounds.getPlayers().get(1));
+        int computerScore = playerScore.calculateScore(rounds.getPlayers().get(1), rounds.getPlayers().get(0));
+
+        //Printing score after round to "console" & to game screen (for easier viewing)
+        computerScoreText.setText("Computer player score: " + computerScore);
+        humanScoreText.setText("Human player score: " + humanScore);
+        roundNum.setText("Round number: " + rounds.getRound());
+
+        deckPrintOut.append("\nHuman score after round " + rounds.getRound() + "----------------> " + humanScore + "\n");
+        deckPrintOut.append("\nComputer score after round " + rounds.getRound() + "----------------> " + computerScore + "\n");
+        if ((humanScore >= 21) && (computerScore >= 21))
+        {
+            deckPrintOut.append("The tournament ended in a tie!!");
+        }
+        else if (humanScore >= 21)
+        {
+            deckPrintOut.append("You won the tournament!");
+        }
+        else if (computerScore >= 21)
+        {
+            deckPrintOut.append("The computer won the tournament... =[\n");
+        }
+        else
+        {
+            //Get the round # and the latest capture
+            int round = rounds.getRound();
+            int turn = rounds.latestCapture;
+            //Create a new round and check if we are loading from a file
+            rounds = new Round(false);
+
+            //Set the score for each player
+            rounds.setScoreForPlayer(Round.PLAYER.HUMAN, humanScore);
+            rounds.setScoreForPlayer(Round.PLAYER.COMPUTER, computerScore);
+
+            //Update the round to display the next round
+            rounds.setRound(round + 1);
+            //Set the first turn to whoevers turn it is now
+            rounds.setTurn(turn);
+
+            rounds.dealCards(true, true, true);
+            players = rounds.getPlayers();
+            //startRound(true);
+        }
+    }
+
+   /* public void saveFile()
+    {
+        FileOutputStream fos = new FileOutputStream("mybean.ser");
+        ObjectOutputStream oos = new ObjectOutputStream(fos);
+        oos.writeObject(rounds);
+        oos.close();
+    }*/
 }
+
+
+//To do
+//Make computer builds show up on screen
+//Add player builds
+//Fix pink border on cards
+//Fix Suggesting a move

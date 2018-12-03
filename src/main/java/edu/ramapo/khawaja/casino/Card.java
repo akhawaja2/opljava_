@@ -102,6 +102,14 @@ public class Card
 
         return combinationCard;
     }
+    void printCombinationCardsWhole(ArrayList< ArrayList<Card> > combination)
+    {
+        Card cardToPrint = new Card();
+        for (int i = 0; i < combination.size(); i++)
+        {
+            cardToPrint.printCardsWhole(combination.get(i));
+        }
+    }
 
     public String print()
     {
