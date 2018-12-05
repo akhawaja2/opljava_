@@ -2,9 +2,11 @@ package edu.ramapo.khawaja.casino;
 
 import android.content.Context;
 import android.media.Image;
+import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
@@ -16,9 +18,12 @@ import android.widget.TextView;
 
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Random;
@@ -268,6 +273,38 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                         movePressed = false;
 
                     }
+                    ArrayList<Integer> ids = rounds.getTable().getMatchingBuilds(selectedCard);
+                    while (ids.size() > 0)
+                    {
+                        ArrayList<Build>  buildCopy = rounds.getTable().getBuilds();
+                        ArrayList<Build> buildToPrint = new ArrayList<>();
+                        for (int i = 0; i < ids.size(); i++)
+                        {
+                            buildToPrint.add(buildCopy.get(ids.get(i)));
+
+                        }
+                        Build selectedBuild = rounds.getTable().getBuilds().get(ids.size()-1);
+                        if (selectedBuild.getIsMultiBuild())
+                        {
+                            for (int i = 0; i < selectedBuild.getMultiBuildCards().size(); i++)
+                            {
+                                players.get(Round.PLAYER.HUMAN.getPlayerVal()).addCardInPile(selectedBuild.getMultiBuildCards().get(i), selectedCard);
+                            }
+                        }
+                        else
+                        {
+                            players.get(Round.PLAYER.HUMAN.getPlayerVal()).addCardInPile(selectedBuild.getBuildCards(), selectedCard);
+
+                        }
+                        players.get(0).addOneCardInPile(selectedCard);
+                        players.get(0).removeCardFromHand(selectedCard);
+                        rounds.getTable().removeBuild(ids.get(ids.size()-1));
+                        clearView(view);
+                        ids.remove(ids.get(ids.size()-1));
+
+                    }
+
+
                 }
                 if (rounds.getPlayers().get(0).getHand().size() == 0 && rounds.getPlayers().get(1).getHand().size() == 0)
                 {
@@ -283,6 +320,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     clearView(view);
                     checkForWin();
                 }
+                clearView(view);
                 loadGameView(view);
                 break;
             }
@@ -350,26 +388,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             rounds.setTurn(1);
         }
     }
-    public void startRound()
-    {
-        while (rounds.getDeck().getDeckCards().size() > 0 || rounds.getTable().getBuilds().size() > 0 || rounds.getTable().getLooseCards().size() > 0)
-        {
-            if (rounds.getPlayers().get(1).getHand().size() == 0 && rounds.getPlayers().get(0).getHand().size() == 0)
-            {
-                rounds.dealCards(true, true, false);
-                //If the table is empty and there are no Builds out (that the user can capture) then deal to the table
-                if (rounds.getTable().getLooseCards().size() == 0 && rounds.getTable().getBuilds().size() == 0)
-                {
-                    rounds.dealCards(false, false, true);
-                }
-            }
-        }
-        if (rounds.getTurn() == Round.PLAYER.COMPUTER.getPlayerVal())
-        {
-            rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
-            rounds.setTurn(0);
-        }
-    }
+
     public void clearView(View view)
     {
 
@@ -377,7 +396,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         {
             computerHand.get(i).setImageResource(android.R.color.transparent);
         }
-        for (int i = 0; i < rounds.getPlayers().get(0).getHand().size(); i++)
+        for (int i = 0; i < 4; i++)
         {
             playerHand.get(i).setImageResource(android.R.color.transparent);
         }
@@ -824,12 +843,104 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         }
     }
 
-   /* public void saveFile()
+    public void saveGame(View view)
     {
-        FileOutputStream fos = new FileOutputStream("mybean.ser");
-        ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(rounds);
-        oos.close();
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "save.txt");
+
+        try
+        {
+            FileOutputStream saveFile = new FileOutputStream(file);
+
+            String output = "";
+
+            //First line of output - Round: X
+            output += "Round: " + rounds.getRound() + "\n";
+
+
+            //Computer player info
+            output += rounds.getPlayers().get(1).getName() + ":" + "\n";
+            output += "Score:" + rounds.getPlayers().get(1).getScore() + "\n";
+            output += "Hand:";
+            for (int i = 0; i < rounds.getPlayers().get(1).getHand().size(); i++)
+            {
+                output += rounds.getPlayers().get(1).getHand().get(i).toStr() + " ";
+            }
+            output += "\nPile: ";
+            for (int i = 0; i < rounds.getPlayers().get(1).getPile().size(); i++)
+            {
+                output += rounds.getPlayers().get(1).getPile().get(i).toStr() + " ";
+            }
+            output += "\n\n";
+
+            //Human player info
+            output += rounds.getPlayers().get(0).getName() + ":" + "\n";
+            output += "Score:" + rounds.getPlayers().get(0).getScore() + "\n";
+            output += "Hand:";
+            for (int i = 0; i < rounds.getPlayers().get(0).getHand().size(); i++)
+            {
+                output += rounds.getPlayers().get(0).getHand().get(i).toStr() + " ";
+            }
+            output += "\nPile: ";
+            for (int i = 0; i < rounds.getPlayers().get(0).getPile().size(); i++)
+            {
+                output += rounds.getPlayers().get(0).getPile().get(i).toStr() + " ";
+            }
+            output += "\n\n";
+
+            //Printing table & deck
+            output += "Table:" + rounds.getTable().printTable() + "\n";
+            output += "Deck:" + rounds.getDeck().printDeck() + "\n";
+            //Printing next player
+            int turn = rounds.getTurn();
+            if (turn == 0)
+            {
+                output += "Next Player: Human";
+            }
+            else if (turn == 1)
+            {
+                output += "Next Player:Computer";
+            }
+
+            byte[] saveFileBytes = output.getBytes();
+            saveFile.write(saveFileBytes);
+            System.out.println(file.getAbsolutePath());
+            saveFile.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            System.out.println("Failed");
+        }
+    }
+
+/*    private String readFromFile(Context context) {
+
+        String ret = "";
+
+        try {
+            InputStream inputStream = context.openFileInput("config.txt");
+
+            if ( inputStream != null ) {
+                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+                String receiveString = "";
+                StringBuilder stringBuilder = new StringBuilder();
+
+                while ( (receiveString = bufferedReader.readLine()) != null ) {
+                    stringBuilder.append(receiveString);
+                }
+
+                inputStream.close();
+                ret = stringBuilder.toString();
+            }
+        }
+        catch (FileNotFoundException e) {
+            Log.e("login activity", "File not found: " + e.toString());
+        } catch (IOException e) {
+            Log.e("login activity", "Can not read file: " + e.toString());
+        }
+
+        return ret;
     }*/
 }
 
