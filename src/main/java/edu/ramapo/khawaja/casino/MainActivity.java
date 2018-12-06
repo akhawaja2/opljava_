@@ -19,8 +19,10 @@ import android.widget.TextView;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
@@ -912,36 +914,242 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             System.out.println("Failed");
         }
     }
+    public void loadFile(View view)
+    {
+        ArrayList<String> array = new ArrayList<String>();
+        String line = "";
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "case1.txt");
+        try
+        {
+            InputStream inputStream = new FileInputStream(file);
+            InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
+            BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
+            String receiveString = "";
+            StringBuilder stringBuilder = new StringBuilder();
 
-/*    private String readFromFile(Context context) {
-
-        String ret = "";
-
-        try {
-            InputStream inputStream = context.openFileInput("config.txt");
-
-            if ( inputStream != null ) {
-                InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-                BufferedReader bufferedReader = new BufferedReader(inputStreamReader);
-                String receiveString = "";
-                StringBuilder stringBuilder = new StringBuilder();
-
-                while ( (receiveString = bufferedReader.readLine()) != null ) {
-                    stringBuilder.append(receiveString);
-                }
-
-                inputStream.close();
-                ret = stringBuilder.toString();
+            while ( (receiveString = bufferedReader.readLine()) != null ) {
+                stringBuilder.append(receiveString);
+                array.add(receiveString);
             }
+
+            inputStream.close();
+            //line = stringBuilder.toString();
+            storeFile(array);
         }
-        catch (FileNotFoundException e) {
-            Log.e("login activity", "File not found: " + e.toString());
-        } catch (IOException e) {
-            Log.e("login activity", "Can not read file: " + e.toString());
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            System.out.println("Failed");
+        }
+    }
+    public void storeFile(ArrayList<String> stringArray)
+    {
+        Card cardToAdd = new Card();
+
+        for (int i = 0; i < stringArray.size(); i++)
+        {
+            System.out.println(stringArray.get(i));
         }
 
-        return ret;
-    }*/
+        //Getting Round #
+        String[] line = stringArray.get(0).split(":");
+        int roundNum = Integer.valueOf(line[1].trim());
+        System.out.println(roundNum);
+
+        //Getting Computer score
+        line = stringArray.get(2).split(":");
+        int compScore = Integer.valueOf(line[1].trim());
+        System.out.println(compScore);
+
+
+        //getting computer hand
+        line = stringArray.get(3).split(":");
+        line = line[1].split(" ");
+        ArrayList<Card> cHand = new ArrayList<>();
+
+        for (int i = 0; i < line.length; i++)
+        {
+            cHand.add(cardToAdd.convertStringToCard(line[i]));
+            System.out.print(cHand.get(i).toStr() + " ");
+        }
+        //getting computer pile
+        line = stringArray.get(4).split(":");
+        line = line[1].split(" ");
+        ArrayList<Card> cPile = new ArrayList<>();
+
+        System.out.println();
+        for (int i = 0; i < line.length; i++)
+        {
+            cPile.add(cardToAdd.convertStringToCard(line[i]));
+            System.out.print(cPile.get(i).toStr() + " ");
+        }
+        System.out.println("\n------------Human stuff under-------------");
+        //Getting Human stuff
+        //Getting human score
+        line = stringArray.get(7).split(":");
+        //System.out.println("line at start of human: " + line[1]);
+        int hScore = Integer.valueOf(line[1].trim());
+        System.out.println(hScore);
+
+        //getting human hand
+        line = stringArray.get(8).split(":");
+        line = line[1].split(" ");
+        ArrayList<Card> hHand = new ArrayList<>();
+
+        for (int i = 0; i < line.length; i++)
+        {
+            //System.out.println(line[i]);
+            hHand.add(cardToAdd.convertStringToCard(line[i]));
+            System.out.print(hHand.get(i).toStr() + " ");
+        }
+        System.out.println("\n");
+        //getting human pile
+        line = stringArray.get(9).split(":");
+        line = line[1].split(" ");
+        ArrayList<Card> hPile = new ArrayList<>();
+        for (int i = 0; i < line.length; i++)
+        {
+            hPile.add(cardToAdd.convertStringToCard(line[i]));
+        }
+
+        System.out.println("Human pile size: " + hPile.size());
+
+        //------------------------Loading in table
+        Table obj = new Table();
+
+        line = stringArray.get(11).split(":");
+        System.out.println("Table: " + line[1]);
+        line = line[1].split(" ");
+
+        ArrayList<Card> buildCards = new ArrayList<>();
+        ArrayList<Card> looseCards = new ArrayList<>();
+        ArrayList<Build> builds = new ArrayList<>();
+
+        for (int i = 0; i < line.length; i++)
+        {
+            boolean insideMulti = false;
+            ArrayList<ArrayList<Card>> multiBuildCards = new ArrayList<>();
+
+            char character = line[i].charAt(0);
+            if (character == '[')
+            {
+                i++;
+                //looping thru till i find close bracked
+                for (int j = i; character != ']'; j++)
+                {
+                    insideMulti = true;
+
+                    if (line[i].length() == 3)
+                    {
+                        ArrayList<Card> Cards = new ArrayList<>();
+                        String [] st = line[i].split("[");
+                        Cards.add(cardToAdd.convertStringToCard(st[0]));
+                        j++; i++;
+                        for (i = i; line[i].length() != 3; i++)
+                        {
+                            Cards.add(cardToAdd.convertStringToCard(line[i]));
+                        }
+                        st = line[i].split("]");
+                        Cards.add(cardToAdd.convertStringToCard(st[0]));
+                        multiBuildCards.add(Cards);
+                    }
+                    if (line[i].length() == 4)
+                    {
+                        ArrayList<Card> Cards = new ArrayList<>();
+                        String CardString = "";
+                        CardString += (line[i].charAt(1));
+                        CardString += (line[i].charAt(2));
+                        Cards.add(cardToAdd.convertStringToCard(CardString));
+                        multiBuildCards.add(Cards);
+                    }
+                }
+            }
+            if (insideMulti)
+            {
+                Build build = new Build();
+                build.setMultiBuildCards(multiBuildCards);
+                build.setIsMultiBuild(true);
+                obj.addBuild(build);
+            }
+            if ( line[i].length() == 3)
+            {
+                String[] st = line[i].split("[");
+                //Pushing back the first Card
+                buildCards.add(cardToAdd.convertStringToCard(st[0]));
+                i++;
+                for (i = i; line[i].length()!= 3; i++)
+                {
+                    buildCards.add(cardToAdd.convertStringToCard(line[i]));
+                }
+                //Pushing back the last Card
+                st = line[i].split("]");
+                buildCards.add(cardToAdd.convertStringToCard(st[0]));
+
+                //Initializing a Build, setting Build Cards to the current Build Cards vector
+                //And then adding the Build to the object
+                Build build = new Build();
+                build.setBuildCards(buildCards);
+                build.setIsMultiBuild(false);
+                obj.addBuild(build);
+            }
+            if (line[i].length() == 4)
+            {
+                String cardString = "";
+                cardString += (line[i].charAt(1));
+                cardString += (line[i].charAt(2));
+                buildCards.add(cardToAdd.convertStringToCard(cardString));
+
+                Build build = new Build();
+                build.setBuildCards(buildCards);
+                build.setIsMultiBuild(false);
+                obj.addBuild(build);
+            }
+            if (line[i].length() == 2)
+            {
+                looseCards.add(cardToAdd.convertStringToCard(line[i]));
+            }
+
+        }
+        obj.addCardInLooseCards(looseCards);
+        for (int i = 0; i < obj.getBuilds().size(); i++)
+        {
+            line = line[i].split(" ");
+            obj.getBuilds().get(i).setOwner(line[line.length - 2]);
+        }
+        System.out.println("--Table--" + obj.printTable());
+        //------------------end table
+        //------------------------Loading in deck
+        line = stringArray.get(12).split(":");
+        line = line[1].split(" ");
+        ArrayList<Card> fileDeck = new ArrayList<>();
+
+        if (line.length > 1)
+        {
+            for (int i = 0; i < line.length; i++)
+            {
+                cardToAdd = cardToAdd.convertStringToCard(line[i]);
+                fileDeck.add(cardToAdd);
+                System.out.print(fileDeck.get(i).print() + " ");
+            }
+            System.out.println("\nFile Deck size: " + fileDeck.size());
+        }
+        System.out.println("........");
+
+
+    }
+    /*Round: 1 stringArray.get(0)
+    Computer: stringArray.get(1)
+    Score:0stringArray.get(2)
+    Hand:DJ C2 H6 SK  stringArray.get(3)
+    Pile: stringArray.get(4)
+    Human: stringArray.get(5)
+    Score:0 stringArray.get(6)
+    Hand:CK H8 C9 D7 stringArray.get(7)
+    Pile: stringArray.get(8)
+    Table:D6 D2 HJ CA stringArray.get(9)
+    Deck:HQ S4 D8 DQ S3 C3 HA H3 S2 CQ S8 SJ S7 CJ D9 D4 C7 S5 SQ S6 DK CX H4 HX SA H9 H2 SX C6 D5 DA C4 DX HK D3 C8 H7 S9 H5 C5 stringArray.get(10)
+    Next Player: Human stringArray.get(11)
+    */
 }
 
 

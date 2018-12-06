@@ -183,6 +183,43 @@ public class Card
 
         return cardStr;
     }
+    Card convertStringToCard(String CardStr)
+{
+    String symbol;
+    int number;
+    if (CardStr.charAt(1) == 'A')
+    {
+        symbol = "A";
+        number = 14;
+    }
+    else if (CardStr.charAt(1) == 'K')
+    {
+        symbol = "K";
+        number = 13;
+    }
+    else if (CardStr.charAt(1) == 'Q')
+    {
+        symbol = "Q";
+        number = 12;
+    }
+    else if (CardStr.charAt(1) == 'J')
+    {
+        symbol = "J";
+        number = 11;
+    }
+    else if (CardStr.charAt(1) == 'X')
+    {
+        symbol = "X";
+        number = 10;
+    }
+    else
+    {
+        symbol = Character.toString(CardStr.charAt(1));
+        number = Integer.valueOf(CardStr.charAt(1));
+    }
+    Card Card1 = new Card(Character.toString(CardStr.charAt(0)), number, symbol);
+    return Card1;
+}
     /*Functions missing:
     * printCombinationCardsWhole
       * print

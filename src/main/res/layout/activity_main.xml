@@ -52,6 +52,7 @@
         android:layout_marginRight="16dp"
         android:background="@drawable/loadgame"
         android:text="Load Game"
+        android:onClick="loadFile"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.583"
         app:layout_constraintStart_toStartOf="parent"
