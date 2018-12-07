@@ -16,7 +16,10 @@ public class Deck
     {
         return deckCards;
     }
-
+    void setDeckCards(ArrayList<Card> cards)
+    {
+        deckCards = cards;
+    }
     void addCard(Card card)
     {
         deckCards.add(card);

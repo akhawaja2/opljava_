@@ -1,5 +1,6 @@
 package edu.ramapo.khawaja.casino;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Table
@@ -577,7 +578,15 @@ public class Table
 
     };
 
+    void setBuilds(ArrayList<Build> builds)
+    {
+        Builds = builds;
+    }
 
+    void setLooseCards (ArrayList<Card> cards)
+    {
+        looseCards = cards;
+    }
     ArrayList< ArrayList<Card> > getCombinationOfLooseCards()
     {
         //Initializing a vector of vector of Cards (these are the possible Card combinations)

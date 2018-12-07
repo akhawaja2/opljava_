@@ -231,10 +231,18 @@ public class Player
         return handOutput;
     }
 
+    void setHand(ArrayList<Card> hand)
+    {
+        this.hand = hand;
+    }
+    void setPile (ArrayList<Card> pile)
+    {
+        this.pile = pile;
+    }
 
-    public int score;
-    private ArrayList<Card> hand = new ArrayList<>();
-    private ArrayList<Card> pile = new ArrayList<>();
+    public int score = 0;
+    public ArrayList<Card> hand = new ArrayList<>();
+    public ArrayList<Card> pile = new ArrayList<>();
     public String name;
 
     //missing:

@@ -1,6 +1,7 @@
 package edu.ramapo.khawaja.casino;
 
 import android.content.Context;
+import android.content.Intent;
 import android.media.Image;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
@@ -52,7 +53,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        rounds.dealCards(true, true, true);
+
     }
     public void onClick(View view)
     {
@@ -153,13 +154,14 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                         cardToTrail.setLayoutParams(cardLayout);
                         clearView(view);
                         rounds.getTable().getLooseCards().add(selectedCard);
-                        players.get(0).removeCardFromHand(selectedCard);
+                        rounds.getPlayers().get(0).removeCardFromHand(selectedCard);
                     }
                     else
                     {
                         clearView(view);
                         rounds.getTable().getLooseCards().add(selectedCard);
                         players.get(0).removeCardFromHand(selectedCard);
+
                         //rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
                     }
                     rounds.computerGameEngine(Round.PLAYER.COMPUTER, Round.PLAYER.HUMAN);
@@ -200,8 +202,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 if (movePressed) {
                     movePressed = false;
                 } else {
-
-
                     if (isPressed)
                     {
                         ArrayList<Build> builds = rounds.getTable().checkBuildOptions(selectedCard, players.get(Round.PLAYER.HUMAN.getPlayerVal()).getHand());
@@ -236,8 +236,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             }
             case R.id.capture:
             {
-                //LinearLayout layout = findViewById(R.id.tableLayout);
-
+                System.out.println("ENTERED CAPTURE");
                 if (isPressed)
                 {
                     deckPrintOut.append("Selected card " + selectedCard.print() + "\n");
@@ -334,6 +333,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     }
     public void coinFlip(View view)
     {
+        rounds.dealCards(true, true, true);
         Random rand = new Random();
         int choice = 0;
         int result = rand.nextInt(2) + 1;
@@ -394,7 +394,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     public void clearView(View view)
     {
 
-        for (int i = 0; i < players.get(1).getHand().size(); i++)
+        for (int i = 0; i < rounds.getPlayers().get(1).getHand().size(); i++)
         {
             computerHand.get(i).setImageResource(android.R.color.transparent);
         }
@@ -409,6 +409,12 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
     }
     public void loadGameView (View view)
     {
+        clearView(view);
+        TextView hScore =  findViewById(R.id.humanScore);
+        TextView compScore =  findViewById(R.id.computerScore);
+
+        hScore.setText("Human Score:  "+ rounds.getPlayers().get(0).getScore());
+        compScore.setText("Computer Score:  "+ rounds.getPlayers().get(1).getScore());
         build = findViewById(R.id.build);
         build.setOnClickListener(this);
         capture = findViewById(R.id.capture);
@@ -417,15 +423,15 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         trail.setOnClickListener(this);
         //Setting clickability to buttons
 
-        // etc.
-        for (int i = 0; i < players.get(0).getHand().size(); i++)
+        for (int i = 0; i < rounds.getPlayers().get(0).getHand().size(); i++)
         {
             playerHand.get(i).setOnClickListener(this);
-            assignImages(players.get(0).getHand().get(i), playerHand.get(i));
+            assignImages(rounds.getPlayers().get(0).getHand().get(i), playerHand.get(i));
         }
-        for (int i = 0; i < players.get(1).getHand().size(); i++)
+
+        for (int i = 0; i < rounds.getPlayers().get(1).getHand().size(); i++)
         {
-            assignImages(players.get(1).getHand().get(i), computerHand.get(i));
+            assignImages(rounds.getPlayers().get(1).getHand().get(i), computerHand.get(i));
         }
 
         for (int i = 0; i < rounds.getTable().getLooseCards().size(); i++)
@@ -934,7 +940,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
 
             inputStream.close();
             //line = stringBuilder.toString();
-            storeFile(array);
+            storeFile(array, view);
         }
         catch (IOException e)
         {
@@ -942,7 +948,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             System.out.println("Failed");
         }
     }
-    public void storeFile(ArrayList<String> stringArray)
+    public void storeFile(ArrayList<String> stringArray, View view)
     {
         Card cardToAdd = new Card();
 
@@ -1018,7 +1024,6 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
         Table obj = new Table();
 
         line = stringArray.get(11).split(":");
-        System.out.println("Table: " + line[1]);
         line = line[1].split(" ");
 
         ArrayList<Card> buildCards = new ArrayList<>();
@@ -1042,14 +1047,14 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     if (line[i].length() == 3)
                     {
                         ArrayList<Card> Cards = new ArrayList<>();
-                        String [] st = line[i].split("[");
+                        String [] st = line[i].split("\\[");
                         Cards.add(cardToAdd.convertStringToCard(st[0]));
                         j++; i++;
                         for (i = i; line[i].length() != 3; i++)
                         {
                             Cards.add(cardToAdd.convertStringToCard(line[i]));
                         }
-                        st = line[i].split("]");
+                        st = line[i].split("\\]");
                         Cards.add(cardToAdd.convertStringToCard(st[0]));
                         multiBuildCards.add(Cards);
                     }
@@ -1073,7 +1078,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
             }
             if ( line[i].length() == 3)
             {
-                String[] st = line[i].split("[");
+                String[] st = line[i].split("\\[");
                 //Pushing back the first Card
                 buildCards.add(cardToAdd.convertStringToCard(st[0]));
                 i++;
@@ -1082,7 +1087,7 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                     buildCards.add(cardToAdd.convertStringToCard(line[i]));
                 }
                 //Pushing back the last Card
-                st = line[i].split("]");
+                st = line[i].split("\\]");
                 buildCards.add(cardToAdd.convertStringToCard(st[0]));
 
                 //Initializing a Build, setting Build Cards to the current Build Cards vector
@@ -1131,11 +1136,64 @@ public class MainActivity  extends AppCompatActivity implements View.OnClickList
                 fileDeck.add(cardToAdd);
                 System.out.print(fileDeck.get(i).print() + " ");
             }
-            System.out.println("\nFile Deck size: " + fileDeck.size());
+
         }
         System.out.println("........");
+        System.out.println("\nFile Deck size: " + fileDeck.size());
 
 
+        rounds = null;
+        rounds = new Round();
+
+
+
+        rounds.setRound(roundNum);
+        rounds.getPlayers().get(1).setScore(compScore);
+        rounds.getPlayers().get(1).setHand(cHand);
+        rounds.getPlayers().get(1).setPile(cPile);
+        rounds.getPlayers().get(0).setScore(hScore);
+        rounds.getPlayers().get(0).setHand(hHand);
+        rounds.getPlayers().get(0).setPile(hPile);
+        //Setting tables below
+        rounds.getTable().setBuilds(obj.getBuilds());
+        rounds.getTable().setLooseCards(obj.getLooseCards());
+        rounds.getDeck().setDeckCards(fileDeck);
+
+        setContentView(R.layout.table_view);
+        playerHand.clear();
+        computerHand.clear();
+        tableHand.clear();
+        bottomCard1 =  findViewById(R.id.playerCard1);
+        bottomCard2 =  findViewById(R.id.playerCard2);
+        bottomCard3 =  findViewById(R.id.playerCard3);
+        bottomCard4 = findViewById(R.id.playerCard4);
+        playerHand.add(bottomCard1);
+        playerHand.add(bottomCard2);
+        playerHand.add(bottomCard3);
+        playerHand.add(bottomCard4);
+
+
+        tableCard1 = findViewById(R.id.tableCard1);
+        tableCard2 =findViewById(R.id.tableCard2);
+        tableCard3 =findViewById(R.id.tableCard3);
+        tableCard4 = findViewById(R.id.tableCard4);
+        tableHand.add(tableCard1);
+        tableHand.add(tableCard2);
+        tableHand.add(tableCard3);
+        tableHand.add(tableCard4);
+
+        topCard1 =  findViewById(R.id.compCard1);
+        topCard2 =  findViewById(R.id.compCard2);
+        topCard3 =  findViewById(R.id.compCard3);
+        topCard4 =  findViewById(R.id.compCard4);
+        computerHand.add(topCard1);
+        computerHand.add(topCard2);
+        computerHand.add(topCard3);
+        computerHand.add(topCard4);
+        //Intent intent = new Intent(this)
+
+        clearView(view);
+        loadGameView(view);
     }
     /*Round: 1 stringArray.get(0)
     Computer: stringArray.get(1)

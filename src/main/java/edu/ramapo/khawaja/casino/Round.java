@@ -39,9 +39,13 @@ public class Round
     TURN turnType;
     //Latest capture - 0 is human, 1 is player. It kept breaking when I made it private or protected. Sorry =[
     int latestCapture = 0;
-    private Round ()
+    public Round ()
     {
+        Player Human = new Player("Human");
+        players.add(Human);
 
+        Player Computer = new Player("Computer");
+        players.add(Computer);
     }
 
     Round(boolean useFileForDeck)
@@ -559,6 +563,7 @@ public class Round
     {
         this.players.get(player.getPlayerVal()).setScore(score);
     }
+
     void setRound(int round)
     {
         roundNumber = round;
@@ -596,6 +601,10 @@ public class Round
     {
         return players;
     }
+
+
+
+
     private ArrayList<Player> players = new ArrayList<>();
     private Deck Deck = new Deck();
     private Table Table = new Table();
